@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Días</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .calculator-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .date-input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .date-field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-text {
+            font-size: 18px;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .days-input {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .days-field {
+            flex: 1;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Calculadora de Días</h1>
+        
+        <!-- SECCIÓN 1: DÍAS ENTRE FECHAS -->
+        <div class="calculator-section">
+            <h2>📆 Días entre dos fechas</h2>
+            <div class="date-input-group">
+                <div class="date-field">
+                    <label>Fecha inicial:</label>
+                    <input type="date" id="fechaInicio" value="2024-01-01">
+                </div>
+                <div class="date-field">
+                    <label>Fecha final:</label>
+                    <input type="date" id="fechaFin" value="2024-01-31">
+                </div>
+            </div>
+            <button onclick="calcularDiasEntreFechas()">Calcular días</button>
+            <div id="resultadoEntreFechas" class="result-box">
+                <p class="result-text">Días transcurridos: <span class="highlight" id="diasTotales">31</span> días</p>
+                <p class="result-text" style="font-size: 14px; color: #666;">(Incluyendo el día inicial y final)</p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: FECHA DESPUÉS DE X DÍAS -->
+        <div class="calculator-section">
+            <h2>⏭️ Fecha después de X días</h2>
+            <div class="days-input">
+                <div class="date-field">
+                    <label>Fecha de inicio:</label>
+                    <input type="date" id="fechaBase" value="2024-01-01">
+                </div>
+                <div class="days-field">
+                    <label>Días a sumar:</label>
+                    <input type="number" id="diasSumar" value="30" min="1">
+                </div>
+            </div>
+            
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="tipoCalculo" value="sumar" checked> 
+                    Sumar días
+                </label>
+                <label>
+                    <input type="radio" name="tipoCalculo" value="restar"> 
+                    Restar días
+                </label>
+            </div>
+            
+            <button onclick="calcularFechaDesdeDias()" style="margin-top: 15px;">Calcular fecha</button>
+            <div id="resultadoFechaDesdeDias" class="result-box">
+                <p class="result-text">Fecha resultante: <span class="highlight" id="fechaResultante">31/01/2024</span></p>
+                <p class="result-text" style="font-size: 14px; color: #666;" id="detalleCalculo">(30 días después del 01/01/2024)</p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: FECHA DESDE HOY -->
+        <div class="calculator-section">
+            <h2>🎯 Fecha desde hoy</h2>
+            <div class="days-input">
+                <div class="days-field">
+                    <label>Días a partir de hoy:</label>
+                    <input type="number" id="diasDesdeHoy" value="15" min="1">
+                </div>
+            </div>
+            
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="tipoHoy" value="sumar" checked> 
+                    Sumar días
+                </label>
+                <label>
+                    <input type="radio" name="tipoHoy" value="restar"> 
+                    Restar días
+                </label>
+            </div>
+            
+            <button onclick="calcularFechaDesdeHoy()" style="margin-top: 15px;">Calcular desde hoy</button>
+            <div id="resultadoFechaDesdeHoy" class="result-box">
+                <p class="result-text" id="fechaDesdeHoyTexto">15 días después del 12/02/2026: <span class="highlight" id="fechaHoyResultante">27/02/2026</span></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Incluye el día inicial y final en todos los cálculos
+        </div>
+    </div>
+
+    <script>
+        // Función para formatear fecha en formato DD/MM/YYYY
+        function formatearFecha(fecha) {
+            let dia = fecha.getDate().toString().padStart(2, '0');
+            let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            let año = fecha.getFullYear();
+            return `${dia}/${mes}/${año}`;
+        }
+
+        // Función para obtener fecha actual en formato YYYY-MM-DD para input date
+        function obtenerFechaActualInput() {
+            let hoy = new Date();
+            let año = hoy.getFullYear();
+            let mes = (hoy.getMonth() + 1).toString().padStart(2, '0');
+            let dia = hoy.getDate().toString().padStart(2, '0');
+            return `${año}-${mes}-${dia}`;
+        }
+
+        // Configurar fecha actual en los inputs al cargar la página
+        window.onload = function() {
+            let fechaHoy = obtenerFechaActualInput();
+            
+            // Establecer fecha de hoy en el campo "días desde hoy"
+            document.getElementById('fechaBase').value = '2026-02-12'; // Fecha fija para el ejemplo
+            document.getElementById('fechaInicio').value = '2026-02-01';
+            document.getElementById('fechaFin').value = '2026-02-28';
+            
+            // Mostrar cálculos iniciales
+            calcularDiasEntreFechas();
+            calcularFechaDesdeDias();
+            calcularFechaDesdeHoy();
+        }
+
+        // SECCIÓN 1: CALCULAR DÍAS ENTRE DOS FECHAS (INCLUYENDO INICIO Y FIN)
+        function calcularDiasEntreFechas() {
+            let fechaInicio = new Date(document.getElementById('fechaInicio').value);
+            let fechaFin = new Date(document.getElementById('fechaFin').value);
+            
+            // Ajustar a medianoche para evitar problemas de zona horaria
+            fechaInicio = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), fechaInicio.getDate());
+            fechaFin = new Date(fechaFin.getFullYear(), fechaFin.getMonth(), fechaFin.getDate());
+            
+            // Calcular diferencia en milisegundos y convertir a días
+            let diferenciaTiempo = fechaFin.getTime() - fechaInicio.getTime();
+            let diferenciaDias = Math.round(diferenciaTiempo / (1000 * 60 * 60 * 24));
+            
+            // Incluir el día inicial y final (sumar 1)
+            let diasIncluyendoExtremos = Math.abs(diferenciaDias) + 1;
+            
+            document.getElementById('diasTotales').innerHTML = diasIncluyendoExtremos;
+        }
+
+        // SECCIÓN 2: CALCULAR FECHA DESPUÉS/ANTES DE X DÍAS DESDE UNA FECHA ESPECÍFICA
+        function calcularFechaDesdeDias() {
+            let fechaBase = new Date(document.getElementById('fechaBase').value);
+            let dias = parseInt(document.getElementById('diasSumar').value) || 0;
+            let tipo = document.querySelector('input[name="tipoCalculo"]:checked').value;
+            
+            fechaBase = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), fechaBase.getDate());
+            
+            let fechaCalculada;
+            let textoOperacion;
+            
+            if (tipo === 'sumar') {
+                fechaCalculada = new Date(fechaBase);
+                fechaCalculada.setDate(fechaBase.getDate() + dias);
+                textoOperacion = `${dias} días después del ${formatearFecha(fechaBase)}`;
+            } else {
+                fechaCalculada = new Date(fechaBase);
+                fechaCalculada.setDate(fechaBase.getDate() - dias);
+                textoOperacion = `${dias} días antes del ${formatearFecha(fechaBase)}`;
+            }
+            
+            document.getElementById('fechaResultante').innerHTML = formatearFecha(fechaCalculada);
+            document.getElementById('detalleCalculo').innerHTML = `(${textoOperacion})`;
+        }
+
+        // SECCIÓN 3: CALCULAR FECHA DESDE HOY
+        function calcularFechaDesdeHoy() {
+            let dias = parseInt(document.getElementById('diasDesdeHoy').value) || 0;
+            let tipo = document.querySelector('input[name="tipoHoy"]:checked').value;
+            
+            let hoy = new Date();
+            hoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+            
+            let fechaCalculada;
+            let textoOperacion;
+            
+            if (tipo === 'sumar') {
+                fechaCalculada = new Date(hoy);
+                fechaCalculada.setDate(hoy.getDate() + dias);
+                textoOperacion = `${dias} días después del ${formatearFecha(hoy)}`;
+            } else {
+                fechaCalculada = new Date(hoy);
+                fechaCalculada.setDate(hoy.getDate() - dias);
+                textoOperacion = `${dias} días antes del ${formatearFecha(hoy)}`;
+            }
+            
+            document.getElementById('fechaHoyResultante').innerHTML = formatearFecha(fechaCalculada);
+            document.getElementById('fechaDesdeHoyTexto').innerHTML = `${textoOperacion}: <span class="highlight">${formatearFecha(fechaCalculada)}</span>`;
+        }
+    </script>
+</body>
+</html>
